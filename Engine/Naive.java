@@ -1,9 +1,9 @@
-package Engine;
-
 /*------------------------------------------------------------------------------
  Author: Caleb Princewill Nwokocha
  Emails: calebnwokocha@gmail.com, nwokochc@myumanitoba.ca
 ---------------------------------------------------------------------------- */
+
+package Engine;
 
 public class Naive {
     // Private instance variables of byte arrays xSample and ySample, and double variables priorX and priorY

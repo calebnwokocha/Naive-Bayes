@@ -1,9 +1,9 @@
-package Engine;
-
 /*------------------------------------------------------------------------------
  Author: Caleb Princewill Nwokocha
  Emails: calebnwokocha@gmail.com, nwokochc@myumanitoba.ca
 ---------------------------------------------------------------------------- */
+
+package Engine;
 
 import java.util.HashMap;
 import java.util.Map;
