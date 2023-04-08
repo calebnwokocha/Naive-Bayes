@@ -9,11 +9,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-public class PMap {
+class PMap {
     private final Database db;
     public PMap(String databaseAddress) { this.db = new Database(databaseAddress); }
 
-    public void addProbability(byte y, byte x, double probability) {
+    protected void addProbability(byte y, byte x, double probability) {
         Map<Byte, Map<Byte, Double>> probabilities = new HashMap<>();;
         Map<Byte, Double> yProbabilities = probabilities.getOrDefault(x, new HashMap<>());
         yProbabilities.put(y, probability);

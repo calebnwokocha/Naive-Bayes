@@ -5,19 +5,16 @@
 
 package Engine;
 
-public class Naive {
+public class Naive extends PMap {
     // Private instance variables of byte arrays xSample and ySample, and double variables priorX and priorY
     private final byte[] xSample, ySample;
-    private final PMap pMap;
 
     // Constructor method that sets the xSample and ySample arrays
     public Naive(byte[] xSample, byte[] ySample, String databaseAddress) {
+        super(databaseAddress);
         this.xSample = xSample;
         this.ySample = ySample;
-        pMap = new PMap(databaseAddress);
     }
-
-    public PMap getMap() { return this.pMap; }
 
     // Method that calculates the Bayesian probability of y given x
     public double bayes (byte y, byte x) {
@@ -35,7 +32,7 @@ public class Naive {
             posterior = (priorY * likelihood) / priorX;
         }
 
-        pMap.addProbability(y, x, posterior);
+        addProbability(y, x, posterior);
         return posterior;
     }
 

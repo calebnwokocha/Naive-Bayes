@@ -10,10 +10,10 @@ import java.util.Map;
 import java.util.Objects;
 import java.sql.*;
 
-public class Database {
+class Database {
     private final String databaseAddress;
 
-    public Database (String databaseAddress) {
+    Database (String databaseAddress) {
         this.databaseAddress = databaseAddress;
         try (Connection conn = getConnection();
              Statement stmt = Objects.requireNonNull(conn).createStatement()) {
