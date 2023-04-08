@@ -1,19 +1,19 @@
+package Engine;
+
 /*------------------------------------------------------------------------------
  Author: Caleb Princewill Nwokocha
  Emails: calebnwokocha@gmail.com, nwokochc@myumanitoba.ca
 ---------------------------------------------------------------------------- */
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.sql.*;
 
-public class PMap {
-    private final String filename;
+public class Database {
+    private final String databaseAddress;
 
-    public PMap(String filename) {
-        this.filename = filename;
-
+    public Database (String databaseAddress) {
+        this.databaseAddress = databaseAddress;
         try (Connection conn = getConnection();
              Statement stmt = Objects.requireNonNull(conn).createStatement()) {
 
@@ -24,35 +24,16 @@ public class PMap {
         }
     }
 
-    public void addProbability(byte y, byte x, double probability) {
-        Map<Byte, Map<Byte, Double>> probabilities = new HashMap<>();;
-        Map<Byte, Double> yProbabilities = probabilities.getOrDefault(x, new HashMap<>());
-        yProbabilities.put(y, probability);
-        probabilities.put(x, yProbabilities);
-        saveProbabilities(probabilities);
-    }
-
-    public double getProbability(byte y, byte x) {
-        Map<Byte, Double> yProbabilities = Objects.requireNonNull(this.loadProbabilities()).get(x);
-        if (yProbabilities != null) {
-            Double probability = yProbabilities.get(y);
-            if (probability != null) {
-                return probability;
-            }
-        }
-        return 0.0;
-    }
-
     private Connection getConnection() {
         try {
-            return DriverManager.getConnection("jdbc:sqlite:" + filename);
+            return DriverManager.getConnection("jdbc:sqlite:" + this.databaseAddress);
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return null;
     }
 
-    private void saveProbabilities(Map<Byte, Map<Byte, Double>> probabilities) {
+    protected void saveProbabilities(Map<Byte, Map<Byte, Double>> probabilities) {
         try (Connection conn = getConnection();
              PreparedStatement stmt = Objects.requireNonNull(conn).
                      prepareStatement("INSERT INTO probabilities (y, x, probability) VALUES (?, ?, ?)")) {
@@ -73,7 +54,7 @@ public class PMap {
         }
     }
 
-    private Map<Byte, Map<Byte, Double>> loadProbabilities() {
+    protected Map<Byte, Map<Byte, Double>> loadProbabilities() {
         Map<Byte, Map<Byte, Double>> probabilities = new HashMap<>();
 
         try (Connection conn = getConnection();
