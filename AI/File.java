@@ -3,7 +3,7 @@
  Emails: calebnwokocha@gmail.com, nwokochc@myumanitoba.ca
 ---------------------------------------------------------------------------- */
 
-package Engine;
+package AI;
 
 import java.io.IOException;
 import java.nio.file.Files;

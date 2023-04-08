@@ -3,7 +3,7 @@
  Emails: calebnwokocha@gmail.com, nwokochc@myumanitoba.ca
 ---------------------------------------------------------------------------- */
 
-import Engine.Naive;
+import AI.Naive;
 
 public class Test {
     public static void main(String[] args) {

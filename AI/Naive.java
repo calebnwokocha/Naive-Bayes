@@ -3,7 +3,7 @@
  Emails: calebnwokocha@gmail.com, nwokochc@myumanitoba.ca
 ---------------------------------------------------------------------------- */
 
-package Engine;
+package AI;
 
 public class Naive extends PMap {
     // Private instance variables of byte arrays xSample and ySample, and double variables priorX and priorY

@@ -3,7 +3,7 @@
  Emails: calebnwokocha@gmail.com, nwokochc@myumanitoba.ca
 ---------------------------------------------------------------------------- */
 
-package Engine;
+package AI;
 
 import java.util.HashMap;
 import java.util.Map;
