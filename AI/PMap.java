@@ -11,24 +11,30 @@ import java.util.Objects;
 
 class PMap {
     private final Database db;
-    public PMap(String databaseAddress) { this.db = new Database(databaseAddress); }
+    Map<Byte, Map<Byte, Double>> probabilities;
+    boolean dbEmpty;
+
+    public PMap(String databaseAddress) {
+        this.db = new Database(databaseAddress);
+        this.dbEmpty = this.db.loadProbabilities().isEmpty();
+        if (!dbEmpty) { this.probabilities = this.db.loadProbabilities(); }
+        else { this.probabilities = new HashMap<>(); }
+    }
 
     protected void addProbability(byte y, byte x, double probability) {
-        Map<Byte, Map<Byte, Double>> probabilities = new HashMap<>();;
-        Map<Byte, Double> yProbabilities = probabilities.getOrDefault(x, new HashMap<>());
+        Map<Byte, Double> yProbabilities;
+
+        if (!dbEmpty) { yProbabilities = Objects.requireNonNull(this.probabilities).get(x); }
+        else { yProbabilities = this.probabilities.getOrDefault(x, new HashMap<>()); }
+
         yProbabilities.put(y, probability);
-        probabilities.put(x, yProbabilities);
-        db.saveProbabilities(probabilities);
+        this.probabilities.put(x, yProbabilities);
+        db.saveProbabilities(this.probabilities);
     }
 
     public double getProbability(byte y, byte x) {
-        Map<Byte, Double> yProbabilities = Objects.requireNonNull(db.loadProbabilities()).get(x);
-        if (yProbabilities != null) {
-            Double probability = yProbabilities.get(y);
-            if (probability != null) {
-                return probability;
-            }
-        }
+        Map<Byte, Double> yProbabilities = Objects.requireNonNull(this.db.loadProbabilities()).get(x);
+        if (yProbabilities.get(y) != null) { return yProbabilities.get(y); }
         return 0.0;
     }
 }
