@@ -9,19 +9,33 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.io.File;
+import java.io.FileOutputStream;
 
-public class File {
+public class FileHandler {
     private byte[] data;
     private final double base;
 
-    public File(double base) { this.base = base; }
+    public FileHandler(double base) { this.base = base; }
 
     public void read (String fileName) throws IOException {
         Path path = Paths.get(fileName);
         this.data = Files.readAllBytes(path);
     }
 
-    public byte getData () { return reduce(this.data); }
+    public void convert(byte[] data, String fileName, String fileExtension)
+            throws IOException, IllegalArgumentException, NullPointerException
+    {
+        File file = new File(fileName + fileExtension);
+        try (FileOutputStream outputStream = new FileOutputStream(file)) {
+            outputStream.write(data);
+            outputStream.flush();
+        }
+    }
+
+    public byte[] getData() { return this.data; }
+
+    public byte getReduceData() { return reduce(this.data); }
 
     private byte reduce (byte[] vector) {
         byte sum = 0;
