@@ -12,7 +12,7 @@ import java.util.Map;
 class Database {
     private Connection connection;
 
-    Database(String databaseAddress) {
+    protected Database(String databaseAddress) {
         try {
             connection = DriverManager.getConnection("jdbc:sqlite:" + databaseAddress);
             createTableIfNotExists();

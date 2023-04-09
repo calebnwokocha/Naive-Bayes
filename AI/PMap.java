@@ -9,11 +9,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-class PMap {
+class PMap extends FileHandler {
     private final Database db;
     private final Map<Byte, Map<Byte, Double>> probabilitiesMap;
 
-    public PMap(String databaseAddress) {
+    protected PMap(String databaseAddress, double base) {
+        super(base);
         this.db = new Database(databaseAddress);
         this.probabilitiesMap = new HashMap<>();
     }
@@ -32,7 +33,7 @@ class PMap {
         return Objects.requireNonNullElse(probability, 0.0);
     }
 
-    public void addProbability(byte y, byte x, double probability) {
+    protected void addProbability(byte y, byte x, double probability) {
         Map<Byte, Double> yProbabilitiesMap = this.probabilitiesMap.get(x);
 
         if (yProbabilitiesMap == null) {

@@ -12,11 +12,11 @@ import java.nio.file.Paths;
 import java.io.File;
 import java.io.FileOutputStream;
 
-public class FileHandler {
+class FileHandler {
     private byte[] data;
     private final double base;
 
-    public FileHandler(double base) { this.base = base; }
+    protected FileHandler(double base) { this.base = base; }
 
     public void read (String fileName) throws IOException {
         Path path = Paths.get(fileName);

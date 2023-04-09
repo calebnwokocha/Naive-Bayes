@@ -11,8 +11,10 @@ public class Naive extends PMap {
     private final ArrayList<Byte> xSample, ySample;
     private final int sampleSize;
 
-    public Naive(ArrayList<Byte> xSample, ArrayList<Byte> ySample, String databaseAddress) {
-        super(databaseAddress);
+    public Naive(ArrayList<Byte> xSample, ArrayList<Byte> ySample,
+                 String databaseAddress, double base)
+    {
+        super(databaseAddress, base);
         this.xSample = xSample;
         this.ySample = ySample;
         this.sampleSize = Math.min(xSample.size(), ySample.size());
