@@ -30,7 +30,7 @@ class PMap extends FileHandler {
         }
 
         Double probability = yProbabilitiesMap.get(y);
-        return Objects.requireNonNullElse(probability, this.search(y, x, searchDepth, searchRate));
+        return Objects.requireNonNullElse(probability, this.searchProbability(y, x, searchDepth, searchRate));
     }
 
     protected void addProbability(double y, double x, double probability) {
@@ -47,7 +47,9 @@ class PMap extends FileHandler {
         }
     }
 
-    private double search (double y, double x, int searchDepth, double searchRate) {
+    private double searchProbability (double y, double x, int searchDepth,
+                                      double searchRate)
+    {
         double maxY = y * (searchDepth + 1);
         double minY = y / (searchDepth + 1);
         double probability;
