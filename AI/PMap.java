@@ -11,16 +11,16 @@ import java.util.Objects;
 
 class PMap extends FileHandler {
     private final Database db;
-    private final Map<Byte, Map<Byte, Double>> probabilitiesMap;
+    private final Map<Double, Map<Double, Double>> probabilitiesMap;
 
-    protected PMap(String databaseAddress, int base) {
+    protected PMap(String databaseAddress, double base) {
         super(base);
         this.db = new Database(databaseAddress);
         this.probabilitiesMap = new HashMap<>();
     }
 
-    public double getProbability(byte y, byte x) {
-        Map<Byte, Double> yProbabilitiesMap = this.probabilitiesMap.get(x);
+    public double getProbability(double y, double x, int searchDepth, double searchRate) {
+        Map<Double, Double> yProbabilitiesMap = this.probabilitiesMap.get(x);
 
         if (yProbabilitiesMap == null) {
             yProbabilitiesMap = db.loadProbabilitiesMap().get(x);
@@ -30,11 +30,11 @@ class PMap extends FileHandler {
         }
 
         Double probability = yProbabilitiesMap.get(y);
-        return Objects.requireNonNullElse(probability, 0.0);
+        return Objects.requireNonNullElse(probability, this.search(y, x, searchDepth, searchRate));
     }
 
-    protected void addProbability(byte y, byte x, double probability) {
-        Map<Byte, Double> yProbabilitiesMap = this.probabilitiesMap.get(x);
+    protected void addProbability(double y, double x, double probability) {
+        Map<Double, Double> yProbabilitiesMap = this.probabilitiesMap.get(x);
 
         if (yProbabilitiesMap == null) {
             yProbabilitiesMap = db.loadProbabilitiesMap().getOrDefault(x, new HashMap<>());
@@ -45,5 +45,29 @@ class PMap extends FileHandler {
             yProbabilitiesMap.put(y, probability);
             db.saveProbabilitiesMap(this.probabilitiesMap);
         }
+    }
+
+    private double search (double y, double x, int searchDepth, double searchRate) {
+        double maxY = y * (searchDepth + 1);
+        double minY = y / (searchDepth + 1);
+        double probability;
+
+        for (double i = minY; i <= maxY; i += searchRate) {
+            Map<Double, Double> yProbabilitiesMap = this.probabilitiesMap.get(x);
+
+            if (yProbabilitiesMap == null) {
+                yProbabilitiesMap = db.loadProbabilitiesMap().get(x);
+
+                if (yProbabilitiesMap == null) { return 0.0; }
+                else { this.probabilitiesMap.put(x, yProbabilitiesMap); }
+            }
+
+            probability = yProbabilitiesMap.getOrDefault(i, 0.0);
+
+            if (probability > 0.0) {
+                this.addProbability(y, x, probability);
+                return probability;
+            }
+        } return 0.0;
     }
 }

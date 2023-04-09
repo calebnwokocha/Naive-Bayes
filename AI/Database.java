@@ -23,19 +23,19 @@ class Database {
 
     private void createTableIfNotExists() throws SQLException {
         try (Statement stmt = connection.createStatement()) {
-            stmt.executeUpdate("CREATE TABLE IF NOT EXISTS probabilities (y BYTE, x BYTE, probability DOUBLE)");
+            stmt.executeUpdate("CREATE TABLE IF NOT EXISTS probabilities (y DOUBLE, x DOUBLE, probability DOUBLE)");
         }
     }
 
-    protected void saveProbabilitiesMap(Map<Byte, Map<Byte, Double>> probabilitiesMap) {
+    protected void saveProbabilitiesMap(Map<Double, Map<Double, Double>> probabilitiesMap) {
         String sql = "INSERT INTO probabilities (y, x, probability) VALUES (?, ?, ?)";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            for (byte x : probabilitiesMap.keySet()) {
-                Map<Byte, Double> yProbabilitiesMap = probabilitiesMap.get(x);
-                for (byte y : yProbabilitiesMap.keySet()) {
+            for (double x : probabilitiesMap.keySet()) {
+                Map<Double, Double> yProbabilitiesMap = probabilitiesMap.get(x);
+                for (double y : yProbabilitiesMap.keySet()) {
                     double probability = yProbabilitiesMap.get(y);
-                    stmt.setByte(1, y);
-                    stmt.setByte(2, x);
+                    stmt.setDouble(1, y);
+                    stmt.setDouble(2, x);
                     stmt.setDouble(3, probability);
                     stmt.addBatch();
                 }
@@ -46,8 +46,8 @@ class Database {
         }
     }
 
-    protected Map<Byte, Map<Byte, Double>> loadProbabilitiesMap() {
-        Map<Byte, Map<Byte, Double>> probabilitiesMap = new HashMap<>();
+    protected Map<Double, Map<Double, Double>> loadProbabilitiesMap() {
+        Map<Double, Map<Double, Double>> probabilitiesMap = new HashMap<>();
 
         String sql = "SELECT y, x, probability FROM probabilities";
         try (
@@ -55,8 +55,8 @@ class Database {
                 ResultSet rs = stmt.executeQuery(sql)
         ) {
             while (rs.next()) {
-                byte y = rs.getByte("y");
-                byte x = rs.getByte("x");
+                double y = rs.getDouble("y");
+                double x = rs.getDouble("x");
                 double probability = rs.getDouble("probability");
 
                 probabilitiesMap.computeIfAbsent(x, k -> new HashMap<>()).put(y, probability);

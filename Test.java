@@ -11,24 +11,24 @@ import java.util.Arrays;
 
 public class Test {
     public static void main(String[] args) {
-        ArrayList<Byte> xSample = new ArrayList<>();
-        ArrayList<Byte> ySample = new ArrayList<>();
+        ArrayList<Double> xSample = new ArrayList<>();
+        ArrayList<Double> ySample = new ArrayList<>();
 
-        xSample.add((byte) 1);
-        xSample.add((byte) 1);
-        xSample.add((byte) 1);
-        xSample.add((byte) 1);
-        xSample.add((byte) 1);
-        xSample.add((byte) 1);
+        xSample.add(1.0);
+        xSample.add(1.0);
+        xSample.add(1.0);
+        xSample.add(1.0);
+        xSample.add(1.0);
+        xSample.add(1.0);
 
-        ySample.add((byte) 4);
-        ySample.add((byte) 5);
-        ySample.add((byte) 14);
-        ySample.add((byte) 0);
-        ySample.add((byte) 4);
-        ySample.add((byte) 5);
+        ySample.add(4.0);
+        ySample.add(5.0);
+        ySample.add(14.0);
+        ySample.add(0.0);
+        ySample.add(25.0);
+        ySample.add(25.0);
 
-        Naive naive = new Naive(xSample, ySample, "database.sqlite", 10);
+        Naive naive = new Naive(xSample, ySample, "database.sqlite", 0.2);
 
         //System.out.println(naive.bayes((byte) 5, (byte) 1, 2));
         //System.out.println(naive.getProbability((byte) 5, (byte) 1));
@@ -36,17 +36,17 @@ public class Test {
         //System.out.println(naive.getProbability((byte) 0, (byte) 1));
         //System.out.println(naive.bayes((byte) 6, (byte) 1, 2));
         //System.out.println(naive.getProbability((byte) 6, (byte) 1));
-        System.out.println(naive.bayes((byte) 1400, (byte) 1, 20000));
-        System.out.println(naive.getProbability((byte) 1400, (byte) 1));
+        //System.out.println(naive.bayes(25.0, 1.0));
+        System.out.println(naive.getProbability(26.0, 1.0, 3, 0.001));
 
         try {
-            naive.read("C:\\Users\\Caleb P. Nwokocha\\Documents\\Naive-Bayes\\CamScanner 01-02-2023 13.30 (1).jpg");
+            naive.read("database.sqlite");
         } catch (IOException e) {
             e.printStackTrace();
         }
 
         byte[] data = naive.getData();
-        byte reduceData = naive.getReduceData();
+        double reduceData = naive.getReduceData();
         //System.out.println(Arrays.toString(data));
         System.out.println(reduceData);
         try {

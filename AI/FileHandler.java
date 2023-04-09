@@ -14,9 +14,9 @@ import java.io.FileOutputStream;
 
 class FileHandler {
     private byte[] data;
-    private final int base;
+    private final double base;
 
-    protected FileHandler(int base) { this.base = base; }
+    protected FileHandler(double base) { this.base = base; }
 
     public void read (String fileName) throws IOException {
         Path path = Paths.get(fileName);
@@ -35,10 +35,10 @@ class FileHandler {
 
     public byte[] getData() { return this.data; }
 
-    public byte getReduceData() { return reduce(this.data); }
+    public double getReduceData() { return reduce(this.data); }
 
-    private byte reduce (byte[] vector) {
-        byte sum = 0;
+    private double reduce (byte[] vector) {
+        double sum = 0;
         for (int i = 1; i <= vector.length; i++) {
             sum += vector[i - 1] * Math.pow(this.base, vector.length - i);
         } return sum;

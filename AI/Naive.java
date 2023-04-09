@@ -8,11 +8,11 @@ package AI;
 import java.util.ArrayList;
 
 public class Naive extends PMap {
-    private final ArrayList<Byte> xSample, ySample;
+    private final ArrayList<Double> xSample, ySample;
     private final int sampleSize;
 
-    public Naive(ArrayList<Byte> xSample, ArrayList<Byte> ySample,
-                 String databaseAddress, int base)
+    public Naive(ArrayList<Double> xSample, ArrayList<Double> ySample,
+                 String databaseAddress, double base)
     {
         super(databaseAddress, base);
         this.xSample = xSample;
@@ -20,17 +20,16 @@ public class Naive extends PMap {
         this.sampleSize = Math.min(xSample.size(), ySample.size());
     }
 
-    public double bayes(byte y, byte x, int guessCoverage) {
+    public double bayes(double y, double x) {
         double priorY = this.probability(y, this.ySample);
         double priorX = this.probability(x, this.xSample);
         double likelihood = this.likelihood(x, y);
         double posterior = (priorX == 0) ? 0.0 : (priorY * likelihood) / priorX;
-        posterior = (posterior == 0.0) ? this.guess(y, x, guessCoverage) : posterior;
         addProbability(y, x, posterior);
         return posterior;
     }
 
-    private double likelihood (byte x, byte y) {
+    private double likelihood (double x, double y) {
         double xyCount = 0.0;
         double yCount = 0.0;
         for (int i = 0; i < sampleSize; i++) {
@@ -40,20 +39,9 @@ public class Naive extends PMap {
         } return (yCount == 0.0) ? 0.0 : xyCount / yCount;
     }
 
-    private double probability(byte z, ArrayList<Byte> sample) {
+    private double probability(double z, ArrayList<Double> sample) {
         int count = 0;
-        for (byte s : sample) { if (s == z) { count += 1; } }
+        for (double s : sample) { if (s == z) { count += 1; } }
         return (sample.size() == 0) ? 0.0 : (double) count / sample.size();
-    }
-
-    private double guess (byte y, byte x, int guessCoverage) {
-        byte maxY = (byte) (y * (guessCoverage + 1));
-        byte minY = (byte) (y / (guessCoverage + 1));
-        double posterior;
-
-        for (y = minY; y <= maxY; y++) {
-            posterior = this.bayes(y, x, guessCoverage);
-            if (posterior > 0.0) { return posterior; }
-        } return 0.0;
     }
 }
