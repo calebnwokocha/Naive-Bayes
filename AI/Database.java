@@ -5,69 +5,68 @@
 
 package AI;
 
+import java.sql.*;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
-import java.sql.*;
 
 class Database {
-    private final String databaseAddress;
+    private Connection connection;
 
-    Database (String databaseAddress) {
-        this.databaseAddress = databaseAddress;
-        try (
-                Connection conn = getConnection();
-                Statement stmt = Objects.requireNonNull(conn).createStatement()
-        ) {
-            stmt.executeUpdate("CREATE TABLE IF NOT EXISTS probabilities (y TINYINT, x TINYINT, probability DOUBLE)");
-        } catch (SQLException e) { e.printStackTrace(); }
+    Database(String databaseAddress) {
+        try {
+            connection = DriverManager.getConnection("jdbc:sqlite:" + databaseAddress);
+            createTableIfNotExists();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
-    private Connection getConnection() {
-        try { return DriverManager.getConnection("jdbc:sqlite:" + this.databaseAddress); }
-        catch (SQLException e) { e.printStackTrace(); }
-        return null;
+    private void createTableIfNotExists() throws SQLException {
+        try (Statement stmt = connection.createStatement()) {
+            stmt.executeUpdate("CREATE TABLE IF NOT EXISTS probabilities (y BYTE, x BYTE, probability DOUBLE)");
+        }
     }
 
-    protected void saveProbabilities(Map<Byte, Map<Byte, Double>> probabilities) {
-        try (
-                Connection conn = getConnection();
-             PreparedStatement stmt = Objects.requireNonNull(conn).
-                     prepareStatement("INSERT INTO probabilities (y, x, probability) VALUES (?, ?, ?)")
-        ) {
-            for (byte x : probabilities.keySet()) {
-                Map<Byte, Double> yProbabilities = probabilities.get(x);
-                for (byte y : yProbabilities.keySet()) {
-                    double probability = yProbabilities.get(y);
+    protected void saveProbabilitiesMap(Map<Byte, Map<Byte, Double>> probabilitiesMap) {
+        String sql = "INSERT INTO probabilities (y, x, probability) VALUES (?, ?, ?)";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            for (byte x : probabilitiesMap.keySet()) {
+                Map<Byte, Double> yProbabilitiesMap = probabilitiesMap.get(x);
+                for (byte y : yProbabilitiesMap.keySet()) {
+                    double probability = yProbabilitiesMap.get(y);
                     stmt.setByte(1, y);
                     stmt.setByte(2, x);
                     stmt.setDouble(3, probability);
-                    stmt.executeUpdate();
+                    stmt.addBatch();
                 }
             }
-
-        } catch (SQLException e) { e.printStackTrace(); }
+            stmt.executeBatch();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
-    protected Map<Byte, Map<Byte, Double>> loadProbabilities() {
-        Map<Byte, Map<Byte, Double>> probabilities = new HashMap<>();
+    protected Map<Byte, Map<Byte, Double>> loadProbabilitiesMap() {
+        Map<Byte, Map<Byte, Double>> probabilitiesMap = new HashMap<>();
 
+        String sql = "SELECT y, x, probability FROM probabilities";
         try (
-                Connection conn = getConnection();
-                Statement stmt = Objects.requireNonNull(conn).createStatement();
-                ResultSet rs = stmt.executeQuery("SELECT y, x, probability FROM probabilities")
+                Statement stmt = connection.createStatement();
+                ResultSet rs = stmt.executeQuery(sql)
         ) {
-                while (rs.next()) {
-                    byte y = rs.getByte("y");
-                    byte x = rs.getByte("x");
-                    double probability = rs.getDouble("probability");
+            while (rs.next()) {
+                byte y = rs.getByte("y");
+                byte x = rs.getByte("x");
+                double probability = rs.getDouble("probability");
 
-                    Map<Byte, Double> yProbabilities = probabilities.getOrDefault(x, new HashMap<>());
-                    yProbabilities.put(y, probability);
-                    probabilities.put(x, yProbabilities);
-                }
-
+                probabilitiesMap.computeIfAbsent(x, k -> new HashMap<>()).put(y, probability);
+            }
         } catch (SQLException e) { e.printStackTrace(); }
-        return probabilities;
+        return probabilitiesMap;
+    }
+
+    public void close() {
+        try { if (connection != null) { connection.close(); } }
+        catch (SQLException e) { e.printStackTrace(); }
     }
 }

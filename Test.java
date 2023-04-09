@@ -21,7 +21,7 @@ public class Test {
 
         ySample.add((byte) 4);
         ySample.add((byte) 5);
-        ySample.add((byte) 5);
+        ySample.add((byte) 14);
         ySample.add((byte) 0);
         ySample.add((byte) 4);
         ySample.add((byte) 5);

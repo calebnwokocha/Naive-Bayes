@@ -11,30 +11,38 @@ import java.util.Objects;
 
 class PMap {
     private final Database db;
-    Map<Byte, Map<Byte, Double>> probabilities;
-    boolean dbEmpty;
+    private final Map<Byte, Map<Byte, Double>> probabilitiesMap;
 
     public PMap(String databaseAddress) {
         this.db = new Database(databaseAddress);
-        this.dbEmpty = this.db.loadProbabilities().isEmpty();
-        if (!dbEmpty) { this.probabilities = this.db.loadProbabilities(); }
-        else { this.probabilities = new HashMap<>(); }
-    }
-
-    protected void addProbability(byte y, byte x, double probability) {
-        Map<Byte, Double> yProbabilities;
-
-        if (!dbEmpty) { yProbabilities = Objects.requireNonNull(this.probabilities).get(x); }
-        else { yProbabilities = this.probabilities.getOrDefault(x, new HashMap<>()); }
-
-        yProbabilities.put(y, probability);
-        this.probabilities.put(x, yProbabilities);
-        db.saveProbabilities(this.probabilities);
+        this.probabilitiesMap = new HashMap<>();
     }
 
     public double getProbability(byte y, byte x) {
-        Map<Byte, Double> yProbabilities = Objects.requireNonNull(this.db.loadProbabilities()).get(x);
-        if (yProbabilities.get(y) != null) { return yProbabilities.get(y); }
-        return 0.0;
+        Map<Byte, Double> yProbabilitiesMap = this.probabilitiesMap.get(x);
+
+        if (yProbabilitiesMap == null) {
+            yProbabilitiesMap = db.loadProbabilitiesMap().get(x);
+
+            if (yProbabilitiesMap == null) { return 0.0; }
+            else { this.probabilitiesMap.put(x, yProbabilitiesMap); }
+        }
+
+        Double probability = yProbabilitiesMap.get(y);
+        return Objects.requireNonNullElse(probability, 0.0);
+    }
+
+    public void addProbability(byte y, byte x, double probability) {
+        Map<Byte, Double> yProbabilitiesMap = this.probabilitiesMap.get(x);
+
+        if (yProbabilitiesMap == null) {
+            yProbabilitiesMap = db.loadProbabilitiesMap().getOrDefault(x, new HashMap<>());
+            this.probabilitiesMap.put(x, yProbabilitiesMap);
+        }
+
+        if (!yProbabilitiesMap.containsKey(y) || !yProbabilitiesMap.get(y).equals(probability)) {
+            yProbabilitiesMap.put(y, probability);
+            db.saveProbabilitiesMap(this.probabilitiesMap);
+        }
     }
 }
