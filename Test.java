@@ -29,14 +29,15 @@ public class Test {
         ySample.add((byte) 5);
 
         Naive naive = new Naive(xSample, ySample, "database.sqlite", 10);
-        System.out.println(naive.bayes((byte) 5, (byte) 1));
-        System.out.println(naive.getProbability((byte) 5, (byte) 1));
-        System.out.println(naive.bayes((byte) 0, (byte) 1));
-        System.out.println(naive.getProbability((byte) 0, (byte) 1));
-        System.out.println(naive.bayes((byte) 6, (byte) 1));
-        System.out.println(naive.getProbability((byte) 6, (byte) 1));
-        System.out.println(naive.bayes((byte) 14, (byte) 1));
-        System.out.println(naive.getProbability((byte) 14, (byte) 1));
+
+        //System.out.println(naive.bayes((byte) 5, (byte) 1, 2));
+        //System.out.println(naive.getProbability((byte) 5, (byte) 1));
+        //System.out.println(naive.bayes((byte) 0, (byte) 1, 2));
+        //System.out.println(naive.getProbability((byte) 0, (byte) 1));
+        //System.out.println(naive.bayes((byte) 6, (byte) 1, 2));
+        //System.out.println(naive.getProbability((byte) 6, (byte) 1));
+        System.out.println(naive.bayes((byte) 1400, (byte) 1, 20000));
+        System.out.println(naive.getProbability((byte) 1400, (byte) 1));
 
         try {
             naive.read("C:\\Users\\Caleb P. Nwokocha\\Documents\\Naive-Bayes\\CamScanner 01-02-2023 13.30 (1).jpg");

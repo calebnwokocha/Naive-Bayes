@@ -14,9 +14,9 @@ import java.io.FileOutputStream;
 
 class FileHandler {
     private byte[] data;
-    private final double base;
+    private final int base;
 
-    protected FileHandler(double base) { this.base = base; }
+    protected FileHandler(int base) { this.base = base; }
 
     public void read (String fileName) throws IOException {
         Path path = Paths.get(fileName);

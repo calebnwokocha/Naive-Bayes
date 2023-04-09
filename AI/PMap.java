@@ -13,7 +13,7 @@ class PMap extends FileHandler {
     private final Database db;
     private final Map<Byte, Map<Byte, Double>> probabilitiesMap;
 
-    protected PMap(String databaseAddress, double base) {
+    protected PMap(String databaseAddress, int base) {
         super(base);
         this.db = new Database(databaseAddress);
         this.probabilitiesMap = new HashMap<>();
