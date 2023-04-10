@@ -7,7 +7,6 @@ import AI.Naive;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class Test {
     public static void main(String[] args) {
@@ -31,13 +30,13 @@ public class Test {
         Naive naive = new Naive(xSample, ySample, "database.sqlite", 0.2);
 
         //System.out.println(naive.bayes((byte) 5, (byte) 1, 2));
-        //System.out.println(naive.getProbability((byte) 5, (byte) 1));
+        //System.out.println(naive.getPosterior((byte) 5, (byte) 1));
         //System.out.println(naive.bayes((byte) 0, (byte) 1, 2));
-        //System.out.println(naive.getProbability((byte) 0, (byte) 1));
+        //System.out.println(naive.getPosterior((byte) 0, (byte) 1));
         //System.out.println(naive.bayes((byte) 6, (byte) 1, 2));
-        //System.out.println(naive.getProbability((byte) 6, (byte) 1));
+        //System.out.println(naive.getPosterior((byte) 6, (byte) 1));
         //System.out.println(naive.bayes(25.0, 1.0));
-        System.out.println(naive.getProbability(26.0, 1.0, 3, 0.001));
+        System.out.println(naive.getPosterior(26.0, 1.0, 3, 0.001));
 
         try {
             naive.read("database.sqlite");

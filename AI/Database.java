@@ -23,20 +23,20 @@ class Database {
 
     private void createTableIfNotExists() throws SQLException {
         try (Statement stmt = connection.createStatement()) {
-            stmt.executeUpdate("CREATE TABLE IF NOT EXISTS probabilities (y DOUBLE, x DOUBLE, probability DOUBLE)");
+            stmt.executeUpdate("CREATE TABLE IF NOT EXISTS posteriors (y DOUBLE, x DOUBLE, posterior DOUBLE)");
         }
     }
 
-    protected void saveProbabilitiesMap(Map<Double, Map<Double, Double>> probabilitiesMap) {
-        String sql = "INSERT INTO probabilities (y, x, probability) VALUES (?, ?, ?)";
+    protected void saveMap(Map<Double, Map<Double, Double>> map) {
+        String sql = "INSERT INTO posteriors (y, x, posterior) VALUES (?, ?, ?)";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            for (double x : probabilitiesMap.keySet()) {
-                Map<Double, Double> yProbabilitiesMap = probabilitiesMap.get(x);
-                for (double y : yProbabilitiesMap.keySet()) {
-                    double probability = yProbabilitiesMap.get(y);
+            for (double x : map.keySet()) {
+                Map<Double, Double> posteriorsMap = map.get(x);
+                for (double y : posteriorsMap.keySet()) {
+                    double posterior = posteriorsMap.get(y);
                     stmt.setDouble(1, y);
                     stmt.setDouble(2, x);
-                    stmt.setDouble(3, probability);
+                    stmt.setDouble(3, posterior);
                     stmt.addBatch();
                 }
             }
@@ -46,10 +46,10 @@ class Database {
         }
     }
 
-    protected Map<Double, Map<Double, Double>> loadProbabilitiesMap() {
-        Map<Double, Map<Double, Double>> probabilitiesMap = new HashMap<>();
+    protected Map<Double, Map<Double, Double>> loadMap() {
+        Map<Double, Map<Double, Double>> map = new HashMap<>();
 
-        String sql = "SELECT y, x, probability FROM probabilities";
+        String sql = "SELECT y, x, posterior FROM posteriors";
         try (
                 Statement stmt = connection.createStatement();
                 ResultSet rs = stmt.executeQuery(sql)
@@ -57,12 +57,12 @@ class Database {
             while (rs.next()) {
                 double y = rs.getDouble("y");
                 double x = rs.getDouble("x");
-                double probability = rs.getDouble("probability");
+                double posterior = rs.getDouble("posterior");
 
-                probabilitiesMap.computeIfAbsent(x, k -> new HashMap<>()).put(y, probability);
+                map.computeIfAbsent(x, k -> new HashMap<>()).put(y, posterior);
             }
         } catch (SQLException e) { e.printStackTrace(); }
-        return probabilitiesMap;
+        return map;
     }
 
     public void close() {

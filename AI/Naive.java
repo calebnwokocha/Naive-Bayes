@@ -25,7 +25,7 @@ public class Naive extends PMap {
         double evidence = this.probability(x, this.xSample);
         double likelihood = this.likelihood(x, y);
         double posterior = (evidence == 0) ? 0.0 : (prior * likelihood) / evidence;
-        addProbability(y, x, posterior);
+        savePosterior(y, x, posterior);
         return posterior;
     }
 

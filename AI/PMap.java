@@ -11,64 +11,64 @@ import java.util.Objects;
 
 class PMap extends FileHandler {
     private final Database db;
-    private final Map<Double, Map<Double, Double>> probabilitiesMap;
+    private final Map<Double, Map<Double, Double>> map;
 
     protected PMap(String databaseAddress, double base) {
         super(base);
         this.db = new Database(databaseAddress);
-        this.probabilitiesMap = new HashMap<>();
+        this.map = new HashMap<>();
     }
 
-    public double getProbability(double y, double x, int searchDepth, double searchRate) {
-        Map<Double, Double> yProbabilitiesMap = this.probabilitiesMap.get(x);
+    public double getPosterior(double y, double x, int searchDepth, double searchRate) {
+        Map<Double, Double> posteriorsMap = this.map.get(x);
 
-        if (yProbabilitiesMap == null) {
-            yProbabilitiesMap = db.loadProbabilitiesMap().get(x);
+        if (posteriorsMap == null) {
+            posteriorsMap = db.loadMap().get(x);
 
-            if (yProbabilitiesMap == null) { return 0.0; }
-            else { this.probabilitiesMap.put(x, yProbabilitiesMap); }
+            if (posteriorsMap == null) { return 0.0; }
+            else { this.map.put(x, posteriorsMap); }
         }
 
-        Double probability = yProbabilitiesMap.get(y);
-        return Objects.requireNonNullElse(probability, this.searchProbability(y, x, searchDepth, searchRate));
+        Double posterior = posteriorsMap.get(y);
+        return Objects.requireNonNullElse(posterior, this.searchPosterior(y, x, searchDepth, searchRate));
     }
 
-    protected void addProbability(double y, double x, double probability) {
-        Map<Double, Double> yProbabilitiesMap = this.probabilitiesMap.get(x);
+    protected void savePosterior(double y, double x, double posterior) {
+        Map<Double, Double> posteriorsMap = this.map.get(x);
 
-        if (yProbabilitiesMap == null) {
-            yProbabilitiesMap = db.loadProbabilitiesMap().getOrDefault(x, new HashMap<>());
-            this.probabilitiesMap.put(x, yProbabilitiesMap);
+        if (posteriorsMap == null) {
+            posteriorsMap = db.loadMap().getOrDefault(x, new HashMap<>());
+            this.map.put(x, posteriorsMap);
         }
 
-        if (!yProbabilitiesMap.containsKey(y) || !yProbabilitiesMap.get(y).equals(probability)) {
-            yProbabilitiesMap.put(y, probability);
-            db.saveProbabilitiesMap(this.probabilitiesMap);
+        if (!posteriorsMap.containsKey(y) || !posteriorsMap.get(y).equals(posterior)) {
+            posteriorsMap.put(y, posterior);
+            db.saveMap(this.map);
         }
     }
 
-    private double searchProbability (double y, double x, int searchDepth,
-                                      double searchRate)
+    private double searchPosterior (double y, double x, int searchDepth,
+                                   double searchRate)
     {
         double maxY = y * (searchDepth + 1);
         double minY = y / (searchDepth + 1);
-        double probability;
+        double posterior;
 
         for (double i = minY; i <= maxY; i += searchRate) {
-            Map<Double, Double> yProbabilitiesMap = this.probabilitiesMap.get(x);
+            Map<Double, Double> posteriorsMap = this.map.get(x);
 
-            if (yProbabilitiesMap == null) {
-                yProbabilitiesMap = db.loadProbabilitiesMap().get(x);
+            if (posteriorsMap == null) {
+                posteriorsMap = db.loadMap().get(x);
 
-                if (yProbabilitiesMap == null) { return 0.0; }
-                else { this.probabilitiesMap.put(x, yProbabilitiesMap); }
+                if (posteriorsMap == null) { return 0.0; }
+                else { this.map.put(x, posteriorsMap); }
             }
 
-            probability = yProbabilitiesMap.getOrDefault(i, 0.0);
+            posterior = posteriorsMap.getOrDefault(i, 0.0);
 
-            if (probability > 0.0) {
-                this.addProbability(y, x, probability);
-                return probability;
+            if (posterior > 0.0) {
+                this.savePosterior(y, x, posterior);
+                return posterior;
             }
         } return 0.0;
     }
