@@ -10,7 +10,7 @@ import java.util.ArrayList;
 public class Bayes extends PMap {
     public Bayes(String databaseAddress, double base) { super(databaseAddress, base); }
 
-    public void train(ArrayList<Double> xSample, ArrayList<Double> ySample) {
+    public void train(ArrayList<Double> ySample, ArrayList<Double> xSample) {
         int sampleSize = Math.min(xSample.size(), ySample.size());
         for (int i = 0; i < sampleSize; i++) {
             double prior = this.probability(ySample.get(i), ySample);

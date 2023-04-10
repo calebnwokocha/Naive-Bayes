@@ -28,7 +28,7 @@ public class Test {
         ySample.add(25.0);
 
         Bayes bayes = new Bayes("database.sqlite", 0.2);
-        bayes.train(xSample, ySample);
+        bayes.train(ySample, xSample);
         System.out.println(bayes.getPosterior(26.0, 1.0, 3, 0.001));
 
         try {
