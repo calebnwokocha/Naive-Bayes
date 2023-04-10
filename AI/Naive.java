@@ -21,10 +21,10 @@ public class Naive extends PMap {
     }
 
     public double bayes(double y, double x) {
-        double priorY = this.probability(y, this.ySample);
-        double priorX = this.probability(x, this.xSample);
+        double prior = this.probability(y, this.ySample);
+        double evidence = this.probability(x, this.xSample);
         double likelihood = this.likelihood(x, y);
-        double posterior = (priorX == 0) ? 0.0 : (priorY * likelihood) / priorX;
+        double posterior = (evidence == 0) ? 0.0 : (prior * likelihood) / evidence;
         addProbability(y, x, posterior);
         return posterior;
     }
