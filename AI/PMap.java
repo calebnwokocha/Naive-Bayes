@@ -33,7 +33,7 @@ class PMap extends FileHandler {
         return Objects.requireNonNullElse(posterior, this.searchPosterior(y, x, searchDepth, searchRate));
     }
 
-    protected void savePosterior(double y, double x, double posterior) {
+    protected void mapPosterior(double y, double x, double posterior) {
         Map<Double, Double> posteriorsMap = this.map.get(x);
 
         if (posteriorsMap == null) {
@@ -42,7 +42,9 @@ class PMap extends FileHandler {
         }
 
         if (!posteriorsMap.containsKey(y) || !posteriorsMap.get(y).equals(posterior)) {
-            posteriorsMap.put(y, posterior);
+            if (posteriorsMap.containsKey(y) && !posteriorsMap.get(y).equals(posterior)) {
+                posteriorsMap.put(y, posteriorsMap.get(y) + posterior);
+            } else { posteriorsMap.put(y, posterior); }
             db.saveMap(this.map);
         }
     }
@@ -50,8 +52,8 @@ class PMap extends FileHandler {
     private double searchPosterior (double y, double x, int searchDepth,
                                    double searchRate)
     {
-        double maxY = y * (searchDepth + 1);
-        double minY = y / (searchDepth + 1);
+        double maxY = y * searchDepth;
+        double minY = y / searchDepth;
         double posterior;
 
         for (double i = minY; i <= maxY; i += searchRate) {
@@ -67,7 +69,7 @@ class PMap extends FileHandler {
             posterior = posteriorsMap.getOrDefault(i, 0.0);
 
             if (posterior > 0.0) {
-                this.savePosterior(y, x, posterior);
+                this.mapPosterior(y, x, posterior);
                 return posterior;
             }
         } return 0.0;

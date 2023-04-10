@@ -20,22 +20,15 @@ public class Test {
         xSample.add(1.0);
         xSample.add(1.0);
 
-        ySample.add(4.0);
-        ySample.add(5.0);
-        ySample.add(14.0);
-        ySample.add(0.0);
+        ySample.add(25.0);
+        ySample.add(25.0);
+        ySample.add(25.0);
+        ySample.add(25.0);
         ySample.add(25.0);
         ySample.add(25.0);
 
-        Naive naive = new Naive(xSample, ySample, "database.sqlite", 0.2);
-
-        //System.out.println(naive.bayes((byte) 5, (byte) 1, 2));
-        //System.out.println(naive.getPosterior((byte) 5, (byte) 1));
-        //System.out.println(naive.bayes((byte) 0, (byte) 1, 2));
-        //System.out.println(naive.getPosterior((byte) 0, (byte) 1));
-        //System.out.println(naive.bayes((byte) 6, (byte) 1, 2));
-        //System.out.println(naive.getPosterior((byte) 6, (byte) 1));
-        //System.out.println(naive.bayes(25.0, 1.0));
+        Naive naive = new Naive("database.sqlite", 0.2);
+        naive.train(xSample, ySample);
         System.out.println(naive.getPosterior(26.0, 1.0, 3, 0.001));
 
         try {
