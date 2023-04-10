@@ -3,7 +3,7 @@
  Emails: calebnwokocha@gmail.com, nwokochc@myumanitoba.ca
 ---------------------------------------------------------------------------- */
 
-import AI.Naive;
+import AI.Bayes;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -27,22 +27,22 @@ public class Test {
         ySample.add(25.0);
         ySample.add(25.0);
 
-        Naive naive = new Naive("database.sqlite", 0.2);
-        naive.train(xSample, ySample);
-        System.out.println(naive.getPosterior(26.0, 1.0, 3, 0.001));
+        Bayes bayes = new Bayes("database.sqlite", 0.2);
+        bayes.train(xSample, ySample);
+        System.out.println(bayes.getPosterior(26.0, 1.0, 3, 0.001));
 
         try {
-            naive.read("database.sqlite");
+            bayes.read("database.sqlite");
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        byte[] data = naive.getData();
-        double reduceData = naive.getReduceData();
+        byte[] data = bayes.getData();
+        double reduceData = bayes.getReduceData();
         //System.out.println(Arrays.toString(data));
         System.out.println(reduceData);
         try {
-            naive.convert(data, "image", ".mp3");
+            bayes.convert(data, "image", ".mp3");
         } catch (IOException e) {
             e.printStackTrace();
         }

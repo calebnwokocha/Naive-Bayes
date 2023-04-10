@@ -7,8 +7,8 @@ package AI;
 
 import java.util.ArrayList;
 
-public class Naive extends PMap {
-    public Naive(String databaseAddress, double base) { super(databaseAddress, base); }
+public class Bayes extends PMap {
+    public Bayes(String databaseAddress, double base) { super(databaseAddress, base); }
 
     public void train(ArrayList<Double> xSample, ArrayList<Double> ySample) {
         int sampleSize = Math.min(xSample.size(), ySample.size());
