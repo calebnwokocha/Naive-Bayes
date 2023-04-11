@@ -24,12 +24,12 @@ public class Test {
         ySample.add(25.0);
         ySample.add(25.0);
         ySample.add(25.0);
-        ySample.add(25.0);
+        ySample.add(26.0);
         ySample.add(25.0);
 
         Bayes bayes = new Bayes("database.sqlite", 0.2);
         bayes.train(ySample, xSample);
-        System.out.println(bayes.getPosterior(26.0, 1.0, 3, 0.001));
+        System.out.println(bayes.getPosterior(27, 1.0, 2.0, 1000000000.0));
 
         try {
             bayes.read("database.sqlite");
@@ -40,7 +40,7 @@ public class Test {
         byte[] data = bayes.getData();
         double reduceData = bayes.getReduceData();
         //System.out.println(Arrays.toString(data));
-        System.out.println(reduceData);
+        //System.out.println(reduceData);
         try {
             bayes.convert(data, "image", ".mp3");
         } catch (IOException e) {

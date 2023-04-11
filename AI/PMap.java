@@ -19,7 +19,7 @@ class PMap extends FileHandler {
         this.map = new HashMap<>();
     }
 
-    public double getPosterior(double y, double x, int searchDepth, double searchRate) {
+    public double getPosterior(double y, double x, double searchDepth, double searchTime) {
         Map<Double, Double> posteriorsMap = this.map.get(x);
 
         if (posteriorsMap == null) {
@@ -30,7 +30,7 @@ class PMap extends FileHandler {
         }
 
         Double posterior = posteriorsMap.get(y);
-        return Objects.requireNonNullElse(posterior, this.searchPosterior(y, x, searchDepth, searchRate));
+        return Objects.requireNonNullElse(posterior, this.searchPosterior(y, x, searchDepth, searchTime));
     }
 
     protected void mapPosterior(double y, double x, double posterior) {
@@ -41,22 +41,28 @@ class PMap extends FileHandler {
             this.map.put(x, posteriorsMap);
         }
 
-        if (!posteriorsMap.containsKey(y) || !posteriorsMap.get(y).equals(posterior)) {
-            if (posteriorsMap.containsKey(y) && !posteriorsMap.get(y).equals(posterior)) {
-                posteriorsMap.put(y, posteriorsMap.get(y) + posterior);
-            } else { posteriorsMap.put(y, posterior); }
+        if (posteriorsMap.containsKey(y)) {
+            if (!posteriorsMap.get(y).equals(posterior)) {
+                posteriorsMap.replace(y, posteriorsMap.get(y), posterior);
+                db.saveMap(this.map);
+            }
+        } else {
+            posteriorsMap.put(y, posterior);
             db.saveMap(this.map);
         }
     }
 
-    private double searchPosterior (double y, double x, int searchDepth,
-                                   double searchRate)
+    private double searchPosterior (double y, double x, double searchDepth,
+                                   double searchTime)
     {
-        double maxY = y * searchDepth;
-        double minY = y / searchDepth;
+        double yMax = y * searchDepth;
+        double yMin = y / searchDepth;
+        double searchRate = (yMax - yMin) / (searchTime - 1);
         double posterior;
 
-        for (double i = minY; i <= maxY; i += searchRate) {
+        System.out.println("Search rate is " + searchRate);
+
+        for (double i = yMin; i <= yMax; i += searchRate) {
             Map<Double, Double> posteriorsMap = this.map.get(x);
 
             if (posteriorsMap == null) {
@@ -74,4 +80,6 @@ class PMap extends FileHandler {
             }
         } return 0.0;
     }
+
+    private double sigmoid(double x) { return 1 / (1 + Math.exp(-x)); }
 }

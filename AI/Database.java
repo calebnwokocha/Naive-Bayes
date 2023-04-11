@@ -23,12 +23,12 @@ class Database {
 
     private void createTableIfNotExists() throws SQLException {
         try (Statement stmt = connection.createStatement()) {
-            stmt.executeUpdate("CREATE TABLE IF NOT EXISTS posteriors (y DOUBLE, x DOUBLE, posterior DOUBLE)");
+            stmt.executeUpdate("CREATE TABLE IF NOT EXISTS posteriors (y DOUBLE, x DOUBLE, posterior DOUBLE, PRIMARY KEY (x, y))");
         }
     }
 
     protected void saveMap(Map<Double, Map<Double, Double>> map) {
-        String sql = "INSERT INTO posteriors (y, x, posterior) VALUES (?, ?, ?)";
+        String sql = "INSERT OR REPLACE INTO posteriors (y, x, posterior) VALUES (?, ?, ?)";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             for (double x : map.keySet()) {
                 Map<Double, Double> posteriorsMap = map.get(x);
@@ -49,7 +49,7 @@ class Database {
     protected Map<Double, Map<Double, Double>> loadMap() {
         Map<Double, Map<Double, Double>> map = new HashMap<>();
 
-        String sql = "SELECT y, x, posterior FROM posteriors";
+        String sql = "SELECT y, x, posterior FROM posteriors ORDER BY x, y";
         try (
                 Statement stmt = connection.createStatement();
                 ResultSet rs = stmt.executeQuery(sql)
