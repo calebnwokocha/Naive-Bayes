@@ -21,15 +21,17 @@ public class Test {
         xSample.add(1.0);
 
         ySample.add(25.0);
+        ySample.add(21.0);
         ySample.add(25.0);
-        ySample.add(25.0);
-        ySample.add(25.0);
+        ySample.add(20.0);
         ySample.add(26.0);
-        ySample.add(25.0);
+        ySample.add(20.0);
 
         Bayes bayes = new Bayes("database.sqlite", 0.2);
         bayes.train(ySample, xSample);
-        System.out.println(bayes.getPosterior(27, 1.0, 2.0, 1000000000.0));
+        //System.out.println(bayes.getPosterior(27, 1.0, 2.0, 1000000000.0));
+        System.out.println(bayes.predict(1));
+
 
         try {
             bayes.read("database.sqlite");

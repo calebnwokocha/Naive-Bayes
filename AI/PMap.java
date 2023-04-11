@@ -60,8 +60,6 @@ class PMap extends FileHandler {
         double searchRate = (yMax - yMin) / (searchTime - 1);
         double posterior;
 
-        System.out.println("Search rate is " + searchRate);
-
         for (double i = yMin; i <= yMax; i += searchRate) {
             Map<Double, Double> posteriorsMap = this.map.get(x);
 
@@ -81,5 +79,17 @@ class PMap extends FileHandler {
         } return 0.0;
     }
 
-    private double sigmoid(double x) { return 1 / (1 + Math.exp(-x)); }
+    public double predict(double x) {
+        Map<Double, Double> posteriorsMap = this.map.get(x);
+        if (posteriorsMap == null) {
+            posteriorsMap = db.loadMap().get(x);
+            if (posteriorsMap == null) { return 0.0; }
+            else { this.map.put(x, posteriorsMap); }
+        }
+        return posteriorsMap.entrySet()
+                .stream()
+                .max(Map.Entry.comparingByValue())
+                .map(Map.Entry::getKey)
+                .orElse(0.0);
+    }
 }

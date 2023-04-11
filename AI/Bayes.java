@@ -6,6 +6,7 @@
 package AI;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 public class Bayes extends PMap {
     public Bayes(String databaseAddress, double base) { super(databaseAddress, base); }
