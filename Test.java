@@ -44,7 +44,7 @@ public class Test {
         //System.out.println(Arrays.toString(data));
         //System.out.println(reduceData);
         try {
-            bayes.convert(data, "image", ".mp3");
+            bayes.convert(data, "database_copy", ".sqlite");
         } catch (IOException e) {
             e.printStackTrace();
         }
